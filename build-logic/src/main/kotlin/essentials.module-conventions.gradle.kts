@@ -26,4 +26,8 @@ tasks {
     build {
         dependsOn(copyJar)
     }
+
+    register<CommandDataTask>("commandData") {
+        destination.set(rootProject.layout.projectDirectory.dir("generated").file("${project.name}-commands.json"))
+    }
 }
