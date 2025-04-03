@@ -70,11 +70,11 @@ public class EconomyTest {
         }
 
         //test Format
-        Assert.assertEquals("Format $1,000", "$1,000", Economy.format(1000.0));
-        Assert.assertEquals("Format $10", "$10", Economy.format(10.0));
-        Assert.assertEquals("Format $10.10", "$10.10", Economy.format(10.10));
-        Assert.assertEquals("Format $10.10", "$10.10", Economy.format(10.1000001));
-        Assert.assertEquals("Format $10.10", "$10.10", Economy.format(10.1099999));
+        Assert.assertEquals("Format $1,000", " $1,000", Economy.format(1000.0));
+        Assert.assertEquals("Format $10", " $10", Economy.format(10.0));
+        Assert.assertEquals("Format $10.10", " $10.10", Economy.format(10.10));
+        Assert.assertEquals("Format $10.10", " $10.10", Economy.format(10.1000001));
+        Assert.assertEquals("Format $10.10", " $10.10", Economy.format(10.1099999));
 
         //test Exceptions
         try {

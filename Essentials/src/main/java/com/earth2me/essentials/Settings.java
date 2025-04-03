@@ -57,10 +57,10 @@ import java.util.regex.PatternSyntaxException;
 import static com.earth2me.essentials.I18n.tlLiteral;
 
 public class Settings implements net.ess3.api.ISettings {
-    private static final BigDecimal DEFAULT_MAX_MONEY = new BigDecimal("10000000000000");
-    private static final BigDecimal DEFAULT_MIN_MONEY = new BigDecimal("-10000000000000");
+    private static final BigDecimal DEFAULT_MAX_MONEY = new BigDecimal("1000000000");
+    private static final BigDecimal DEFAULT_MIN_MONEY = new BigDecimal("0");
     private static final Tag DEFAULT_PRIMARY_COLOR = Tag.styling(NamedTextColor.GOLD);
-    private static final Tag DEFAULT_SECONDARY_COLOR = Tag.styling(NamedTextColor.RED);
+    private static final Tag DEFAULT_SECONDARY_COLOR = Tag.styling(NamedTextColor.GRAY);
     private final transient EssentialsConfiguration config;
     private final transient IEssentials ess;
     private final transient AtomicInteger reloadCount = new AtomicInteger(0);
@@ -1051,8 +1051,8 @@ public class Settings implements net.ess3.api.ISettings {
 
     // A valid currency symbol value must be one non-integer character.
     private String _getCurrencySymbol() {
-        String value = config.getString("currency-symbol", "$").trim();
-        if (value.length() > 1 || value.matches("\\d")) {
+        String value = " " + config.getString("currency-symbol", "$").trim();
+        if (value.length() > 4 || value.matches("\\d")) {
             value = "$";
         }
         return value;
