@@ -20,8 +20,8 @@ public final class NumberUtil {
     private static final BigDecimal BILLION = new BigDecimal(1_000_000_000);
     private static final BigDecimal TRILLION = new BigDecimal(1_000_000_000_000L);
 
-    private static final DecimalFormat twoDPlaces = new DecimalFormat("#,###.##");
-    private static final DecimalFormat currencyFormat = new DecimalFormat("#0.00", DecimalFormatSymbols.getInstance(Locale.US));
+    private static final DecimalFormat twoDPlaces = new DecimalFormat("####.#########");
+    private static final DecimalFormat currencyFormat = new DecimalFormat("#0.000000000", DecimalFormatSymbols.getInstance(Locale.US));
 
     // This field is likely to be modified in com.earth2me.essentials.Settings when loading currency format.
     // This ensures that we can supply a constant formatting.
