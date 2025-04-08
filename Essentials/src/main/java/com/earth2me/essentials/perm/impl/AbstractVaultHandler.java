@@ -1,7 +1,7 @@
 package com.earth2me.essentials.perm.impl;
 
-import net.milkbowl.vault.chat.Chat;
-import net.milkbowl.vault.permission.Permission;
+import com.github.adminoid.vault.chat.Chat;
+import com.github.adminoid.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -17,8 +17,8 @@ public abstract class AbstractVaultHandler extends SuperpermsHandler {
 
     private boolean setupProviders() {
         try {
-            Class.forName("net.milkbowl.vault.permission.Permission");
-            Class.forName("net.milkbowl.vault.chat.Chat");
+            Class.forName("com.github.adminoid.vault.permission.Permission");
+            Class.forName("com.github.adminoid.vault.chat.Chat");
         } catch (final ClassNotFoundException e) {
             return false;
         }

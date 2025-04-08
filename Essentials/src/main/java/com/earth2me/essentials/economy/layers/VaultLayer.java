@@ -1,7 +1,7 @@
 package com.earth2me.essentials.economy.layers;
 
 import com.earth2me.essentials.economy.EconomyLayer;
-import net.milkbowl.vault.economy.Economy;
+import com.github.adminoid.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.Plugin;

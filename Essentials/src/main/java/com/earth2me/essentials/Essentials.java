@@ -237,8 +237,8 @@ public class Essentials extends JavaPlugin implements net.ess3.api.IEssentials {
     public void onLoad() {
         try {
             // Vault registers their Essentials provider at low priority, so we have to use normal priority here
-            Class.forName("net.milkbowl.vault.economy.Economy");
-            getServer().getServicesManager().register(net.milkbowl.vault.economy.Economy.class, new VaultEconomyProvider(this), this, ServicePriority.Normal);
+            Class.forName("com.github.adminoid.vault.economy.Economy");
+            getServer().getServicesManager().register(com.github.adminoid.vault.economy.Economy.class, new VaultEconomyProvider(this), this, ServicePriority.Normal);
         } catch (final ClassNotFoundException ignored) {
             // Probably safer than fetching for the plugin as bukkit may not have marked it as enabled at this point in time
         }

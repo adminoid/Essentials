@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    compileOnly('com.github.milkbowl:VaultAPI:1.7') {
+    compileOnly('com.github.adminoid:VaultAPI:1.7.2-alpha-2') {
         exclude group: "org.bukkit", module: "bukkit"
     }
     compileOnly 'net.luckperms:api:5.3'
