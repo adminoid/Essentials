@@ -24,17 +24,17 @@ public class VaultLayer implements EconomyLayer {
 
     @Override
     public BigDecimal getBalance(OfflinePlayer player) {
-        return BigDecimal.valueOf(adapter.getBalance(player));
+        return adapter.getBalance(player);
     }
 
     @Override
     public boolean deposit(OfflinePlayer player, BigDecimal amount) {
-        return adapter.depositPlayer(player, amount.doubleValue()).transactionSuccess();
+        return adapter.depositPlayer(player, amount).transactionSuccess();
     }
 
     @Override
     public boolean withdraw(OfflinePlayer player, BigDecimal amount) {
-        return adapter.withdrawPlayer(player, amount.doubleValue()).transactionSuccess();
+        return adapter.withdrawPlayer(player, amount).transactionSuccess();
     }
 
     @Override

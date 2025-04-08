@@ -12,6 +12,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 
 public class EconomyTest {
     private static final String NPCNAME = "npc1";
@@ -57,7 +58,7 @@ public class EconomyTest {
             Assert.assertEquals("Player has no money", 0.0, Economy.getMoney(PLAYERNAME), 0);
             Economy.add(PLAYERNAME, 10.0);
             Assert.assertEquals("Add money", 10.0, Economy.getMoney(PLAYERNAME), 0);
-            Economy.subtract(PLAYERNAME, 5.0);
+            Economy.subtract(PLAYERNAME, new BigDecimal(5.0));
             Assert.assertEquals("Subtract money", 5.0, Economy.getMoney(PLAYERNAME), 0);
             Economy.multiply(PLAYERNAME, 2.0);
             Assert.assertEquals("Multiply money", 10.0, Economy.getMoney(PLAYERNAME), 0);
@@ -81,7 +82,7 @@ public class EconomyTest {
             Assert.assertTrue("Player exists", Economy.playerExists(PLAYERNAME));
             Economy.resetBalance(PLAYERNAME);
             Assert.assertEquals("Reset balance", 0.0, Economy.getMoney(PLAYERNAME), 0);
-            Economy.subtract(PLAYERNAME, 5.0);
+            Economy.subtract(PLAYERNAME, new BigDecimal(5.0));
             Assert.fail("Did not throw exception");
         } catch (final NoLoanPermittedException | MaxMoneyException ignored) {
         } catch (final UserDoesNotExistException ex) {

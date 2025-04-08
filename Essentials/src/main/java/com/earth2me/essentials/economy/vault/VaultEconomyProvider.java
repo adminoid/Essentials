@@ -61,8 +61,8 @@ public class VaultEconomyProvider implements Economy {
     }
 
     @Override
-    public String format(double amount) {
-        return AdventureUtil.miniToLegacy(NumberUtil.displayCurrency(BigDecimal.valueOf(amount), ess));
+    public String format(BigDecimal amount) {
+        return AdventureUtil.miniToLegacy(NumberUtil.displayCurrency(amount, ess));
     }
 
     @Override
@@ -102,48 +102,38 @@ public class VaultEconomyProvider implements Economy {
 
     @SuppressWarnings("deprecation")
     @Override
-    public double getBalance(String playerName) {
+    public BigDecimal getBalance(String playerName) {
         try {
-            return getDoubleValue(com.earth2me.essentials.api.Economy.getMoneyExact(playerName));
+            return com.earth2me.essentials.api.Economy.getMoneyExact(playerName);
         } catch (UserDoesNotExistException e) {
             createPlayerAccount(playerName);
-            return getDoubleValue(ess.getSettings().getStartingBalance());
+            return ess.getSettings().getStartingBalance();
         }
     }
 
     @Override
-    public double getBalance(OfflinePlayer player) {
+    public BigDecimal getBalance(OfflinePlayer player) {
         try {
-            return getDoubleValue(com.earth2me.essentials.api.Economy.getMoneyExact(player.getUniqueId()));
+            return com.earth2me.essentials.api.Economy.getMoneyExact(player.getUniqueId());
         } catch (UserDoesNotExistException e) {
             createPlayerAccount(player);
-            return getDoubleValue(ess.getSettings().getStartingBalance());
+            return ess.getSettings().getStartingBalance();
         }
-    }
-
-    private double getDoubleValue(final BigDecimal value) {
-        double amount = value.doubleValue();
-        if (new BigDecimal(amount).compareTo(value) > 0) {
-            // closest double is bigger than the exact amount
-            // -> get the previous double value to not return more money than the user has
-            amount = Math.nextAfter(amount, Double.NEGATIVE_INFINITY);
-        }
-        return amount;
     }
 
     @Override
-    public double getBalance(String playerName, String world) {
+    public BigDecimal getBalance(String playerName, String world) {
         return getBalance(playerName);
     }
 
     @Override
-    public double getBalance(OfflinePlayer player, String world) {
+    public BigDecimal getBalance(OfflinePlayer player, String world) {
         return getBalance(player);
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    public boolean has(String playerName, double amount) {
+    public boolean has(String playerName, BigDecimal amount) {
         try {
             return com.earth2me.essentials.api.Economy.hasEnough(playerName, amount);
         } catch (UserDoesNotExistException e) {
@@ -152,127 +142,128 @@ public class VaultEconomyProvider implements Economy {
     }
 
     @Override
-    public boolean has(OfflinePlayer player, double amount) {
+    public boolean has(OfflinePlayer player, BigDecimal amount) {
         try {
-            return com.earth2me.essentials.api.Economy.hasEnough(player.getUniqueId(), BigDecimal.valueOf(amount));
+            return com.earth2me.essentials.api.Economy.hasEnough(player.getUniqueId(), amount);
         } catch (UserDoesNotExistException e) {
             return false;
         }
     }
 
     @Override
-    public boolean has(String playerName, String worldName, double amount) {
+    public boolean has(String playerName, String worldName, BigDecimal amount) {
         return has(playerName, amount);
     }
 
     @Override
-    public boolean has(OfflinePlayer player, String worldName, double amount) {
+    public boolean has(OfflinePlayer player, String worldName, BigDecimal amount) {
         return has(player, amount);
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    public EconomyResponse withdrawPlayer(String playerName, double amount) {
+    public EconomyResponse withdrawPlayer(String playerName, BigDecimal amount) {
         if (playerName == null) {
-            return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "Player name cannot be null!");
+            return new EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, "Player name cannot be null!");
         }
-        if (amount < 0) {
-            return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "Cannot withdraw negative funds!");
+        if (amount.compareTo(BigDecimal.ZERO) > 0) {
+            return new EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, "Cannot withdraw negative funds!");
         }
 
         try {
             com.earth2me.essentials.api.Economy.subtract(playerName, amount);
             return new EconomyResponse(amount, getBalance(playerName), EconomyResponse.ResponseType.SUCCESS, null);
         } catch (UserDoesNotExistException e) {
-            return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "User does not exist!");
+            return new EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, "User does not exist!");
         } catch (NoLoanPermittedException e) {
-            return new EconomyResponse(0, getBalance(playerName), EconomyResponse.ResponseType.FAILURE, "Loan was not permitted!");
+            return new EconomyResponse(BigDecimal.ZERO, getBalance(playerName), EconomyResponse.ResponseType.FAILURE, "Loan was not permitted!");
         } catch (MaxMoneyException e) {
-            return new EconomyResponse(0, getBalance(playerName), EconomyResponse.ResponseType.FAILURE, "User goes over maximum money limit!");
+            return new EconomyResponse(BigDecimal.ZERO, getBalance(playerName), EconomyResponse.ResponseType.FAILURE, "User goes over maximum money limit!");
         }
     }
 
     @Override
-    public EconomyResponse withdrawPlayer(OfflinePlayer player, double amount) {
+    public EconomyResponse withdrawPlayer(OfflinePlayer player, BigDecimal amount) {
         if (player == null) {
-            return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "Player cannot be null!");
+            return new EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, "Player cannot be null!");
         }
-        if (amount < 0) {
-            return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "Cannot withdraw negative funds!");
+
+        if (amount.compareTo(BigDecimal.ZERO) > 0) {
+            return new EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, "Cannot withdraw negative funds!");
         }
 
         try {
-            com.earth2me.essentials.api.Economy.subtract(player.getUniqueId(), BigDecimal.valueOf(amount));
+            com.earth2me.essentials.api.Economy.subtract(player.getUniqueId(), amount);
             return new EconomyResponse(amount, getBalance(player), EconomyResponse.ResponseType.SUCCESS, null);
         } catch (UserDoesNotExistException e) {
-            return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "User does not exist!");
+            return new EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, "User does not exist!");
         } catch (NoLoanPermittedException e) {
-            return new EconomyResponse(0, getBalance(player), EconomyResponse.ResponseType.FAILURE, "Loan was not permitted!");
+            return new EconomyResponse(BigDecimal.ZERO, getBalance(player), EconomyResponse.ResponseType.FAILURE, "Loan was not permitted!");
         } catch (MaxMoneyException e) {
-            return new EconomyResponse(0, getBalance(player), EconomyResponse.ResponseType.FAILURE, "User goes over maximum money limit!");
+            return new EconomyResponse(BigDecimal.ZERO, getBalance(player), EconomyResponse.ResponseType.FAILURE, "User goes over maximum money limit!");
         }
     }
 
     @Override
-    public EconomyResponse withdrawPlayer(String playerName, String worldName, double amount) {
+    public EconomyResponse withdrawPlayer(String playerName, String worldName, BigDecimal amount) {
         return withdrawPlayer(playerName, amount);
     }
 
     @Override
-    public EconomyResponse withdrawPlayer(OfflinePlayer player, String worldName, double amount) {
+    public EconomyResponse withdrawPlayer(OfflinePlayer player, String worldName, BigDecimal amount) {
         return withdrawPlayer(player, amount);
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    public EconomyResponse depositPlayer(String playerName, double amount) {
+    public EconomyResponse depositPlayer(String playerName, BigDecimal amount) {
         if (playerName == null) {
-            return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "Player name can not be null.");
+            return new EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, "Player name can not be null.");
         }
-        if (amount < 0) {
-            return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "Cannot deposit negative funds");
+        if (amount.compareTo(BigDecimal.ZERO) > 0) {
+            return new EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, "Cannot deposit negative funds");
         }
 
         try {
             com.earth2me.essentials.api.Economy.add(playerName, amount);
             return new EconomyResponse(amount, getBalance(playerName), EconomyResponse.ResponseType.SUCCESS, null);
         } catch (UserDoesNotExistException e) {
-            return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "User does not exist!");
+            return new EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, "User does not exist!");
         } catch (NoLoanPermittedException e) {
-            return new EconomyResponse(0, getBalance(playerName), EconomyResponse.ResponseType.FAILURE, "Loan was not permitted!");
+            return new EconomyResponse(BigDecimal.ZERO, getBalance(playerName), EconomyResponse.ResponseType.FAILURE, "Loan was not permitted!");
         } catch (MaxMoneyException e) {
-            return new EconomyResponse(0, getBalance(playerName), EconomyResponse.ResponseType.FAILURE, "User goes over maximum money limit!");
+            return new EconomyResponse(BigDecimal.ZERO, getBalance(playerName), EconomyResponse.ResponseType.FAILURE, "User goes over maximum money limit!");
         }
     }
 
     @Override
-    public EconomyResponse depositPlayer(OfflinePlayer player, double amount) {
+    public EconomyResponse depositPlayer(OfflinePlayer player, BigDecimal amount) {
         if (player == null) {
-            return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "Player can not be null.");
+            return new EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, "Player can not be null.");
         }
-        if (amount < 0) {
-            return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "Cannot deposit negative funds");
+        if (amount.compareTo(BigDecimal.ZERO) > 0) {
+            return new EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, "Cannot deposit negative funds");
         }
 
         try {
-            com.earth2me.essentials.api.Economy.add(player.getUniqueId(), BigDecimal.valueOf(amount));
+            com.earth2me.essentials.api.Economy.add(player.getUniqueId(), amount);
             return new EconomyResponse(amount, getBalance(player), EconomyResponse.ResponseType.SUCCESS, null);
         } catch (UserDoesNotExistException e) {
-            return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "User does not exist!");
+            return new EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, "User does not exist!");
         } catch (NoLoanPermittedException e) {
-            return new EconomyResponse(0, getBalance(player), EconomyResponse.ResponseType.FAILURE, "Loan was not permitted!");
+            return new EconomyResponse(BigDecimal.ZERO, getBalance(player), EconomyResponse.ResponseType.FAILURE, "Loan was not permitted!");
         } catch (MaxMoneyException e) {
-            return new EconomyResponse(0, getBalance(player), EconomyResponse.ResponseType.FAILURE, "User goes over maximum money limit!");
+            return new EconomyResponse(BigDecimal.ZERO, getBalance(player), EconomyResponse.ResponseType.FAILURE, "User goes over maximum money limit!");
         }
     }
 
     @Override
-    public EconomyResponse depositPlayer(String playerName, String worldName, double amount) {
+    public EconomyResponse depositPlayer(String playerName, String worldName, BigDecimal amount) {
         return depositPlayer(playerName, amount);
     }
 
     @Override
-    public EconomyResponse depositPlayer(OfflinePlayer player, String worldName, double amount) {
+    public EconomyResponse depositPlayer(OfflinePlayer player, String worldName, BigDecimal amount) {
         return depositPlayer(player, amount);
     }
 
@@ -346,57 +337,57 @@ public class VaultEconomyProvider implements Economy {
 
     @Override
     public EconomyResponse createBank(String name, String player) {
-        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "EssentialsX does not support bank accounts!");
+        return new EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "EssentialsX does not support bank accounts!");
     }
 
     @Override
     public EconomyResponse createBank(String name, OfflinePlayer player) {
-        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "EssentialsX does not support bank accounts!");
+        return new EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "EssentialsX does not support bank accounts!");
     }
 
     @Override
     public EconomyResponse deleteBank(String name) {
-        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "EssentialsX does not support bank accounts!");
+        return new EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "EssentialsX does not support bank accounts!");
     }
 
     @Override
     public EconomyResponse bankBalance(String name) {
-        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "EssentialsX does not support bank accounts!");
+        return new EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "EssentialsX does not support bank accounts!");
     }
 
     @Override
-    public EconomyResponse bankHas(String name, double amount) {
-        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "EssentialsX does not support bank accounts!");
+    public EconomyResponse bankHas(String name, BigDecimal amount) {
+        return new EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "EssentialsX does not support bank accounts!");
     }
 
     @Override
-    public EconomyResponse bankWithdraw(String name, double amount) {
-        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "EssentialsX does not support bank accounts!");
+    public EconomyResponse bankWithdraw(String name, BigDecimal amount) {
+        return new EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "EssentialsX does not support bank accounts!");
     }
 
     @Override
-    public EconomyResponse bankDeposit(String name, double amount) {
-        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "EssentialsX does not support bank accounts!");
+    public EconomyResponse bankDeposit(String name, BigDecimal amount) {
+        return new EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "EssentialsX does not support bank accounts!");
     }
 
     @Override
     public EconomyResponse isBankOwner(String name, String playerName) {
-        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "EssentialsX does not support bank accounts!");
+        return new EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "EssentialsX does not support bank accounts!");
     }
 
     @Override
     public EconomyResponse isBankOwner(String name, OfflinePlayer player) {
-        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "EssentialsX does not support bank accounts!");
+        return new EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "EssentialsX does not support bank accounts!");
     }
 
     @Override
     public EconomyResponse isBankMember(String name, String playerName) {
-        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "EssentialsX does not support bank accounts!");
+        return new EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "EssentialsX does not support bank accounts!");
     }
 
     @Override
     public EconomyResponse isBankMember(String name, OfflinePlayer player) {
-        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "EssentialsX does not support bank accounts!");
+        return new EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "EssentialsX does not support bank accounts!");
     }
 
     @Override

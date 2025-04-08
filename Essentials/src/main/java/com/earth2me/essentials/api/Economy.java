@@ -338,9 +338,9 @@ public class Economy {
      * @deprecated Use {@link Economy#subtract(UUID, BigDecimal)} or {@link Economy#subtract(User, BigDecimal)}
      */
     @Deprecated
-    public static void subtract(final String name, final double amount) throws UserDoesNotExistException, NoLoanPermittedException, MaxMoneyException {
+    public static void subtract(final String name, final BigDecimal amount) throws UserDoesNotExistException, NoLoanPermittedException, MaxMoneyException {
         try {
-            substract(name, BigDecimal.valueOf(amount));
+            substract(name, amount);
         } catch (final ArithmeticException e) {
             ess.getLogger().log(Level.WARNING, "Failed to subtract " + amount + " of balance of " + name + ": " + e.getMessage(), e);
         }
