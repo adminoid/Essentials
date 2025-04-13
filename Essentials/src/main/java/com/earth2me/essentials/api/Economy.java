@@ -664,7 +664,7 @@ public class Economy {
     @Deprecated
     public static boolean hasMore(final String name, final double amount) throws UserDoesNotExistException {
         try {
-            return hasMore(name, BigDecimal.valueOf(amount));
+            return hasMore(name, amount);
         } catch (final ArithmeticException e) {
             ess.getLogger().log(Level.WARNING, "Failed to compare balance of " + name + " with " + amount + ": " + e.getMessage(), e);
             return false;

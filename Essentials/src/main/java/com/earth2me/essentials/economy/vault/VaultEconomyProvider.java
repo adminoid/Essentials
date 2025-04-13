@@ -166,7 +166,7 @@ public class VaultEconomyProvider implements Economy {
         if (playerName == null) {
             return new EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, "Player name cannot be null!");
         }
-        if (amount.compareTo(BigDecimal.ZERO) > 0) {
+        if (amount.compareTo(BigDecimal.ZERO) < 0) {
             return new EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, "Cannot withdraw negative funds!");
         }
 
@@ -187,7 +187,6 @@ public class VaultEconomyProvider implements Economy {
         if (player == null) {
             return new EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, "Player cannot be null!");
         }
-
         if (amount.compareTo(BigDecimal.ZERO) < 0) {
             return new EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, "Cannot withdraw negative funds!");
         }
@@ -220,7 +219,7 @@ public class VaultEconomyProvider implements Economy {
         if (playerName == null) {
             return new EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, "Player name can not be null.");
         }
-        if (amount.compareTo(BigDecimal.ZERO) > 0) {
+        if (amount.compareTo(BigDecimal.ZERO) < 0) {
             return new EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, "Cannot deposit negative funds");
         }
 
@@ -241,7 +240,7 @@ public class VaultEconomyProvider implements Economy {
         if (player == null) {
             return new EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, "Player can not be null.");
         }
-        if (amount.compareTo(BigDecimal.ZERO) > 0) {
+        if (amount.compareTo(BigDecimal.ZERO) < 0) {
             return new EconomyResponse(BigDecimal.ZERO, BigDecimal.ZERO, EconomyResponse.ResponseType.FAILURE, "Cannot deposit negative funds");
         }
 
